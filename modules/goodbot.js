@@ -8,7 +8,8 @@ class GoodBot {
     this.parents = {
       general: '427530321869799428',
       mega: '427531038991056897',
-      other: '360848285679747072'
+      other: '360848285679747072',
+      test: '428538257278631936'
     }
 
     this.channels = {
@@ -17,14 +18,37 @@ class GoodBot {
 
     this.handle = {
       message: msg => {
-        // check if channel.parent.id is in this.channels
-        if (Object.values(this.parents).indexOf(msg.channel.parent.id) !== -1) {
-          // check if msg has "!" prefix
-          if (/^!/.test(msg.content)) {
+        console.log('incoming!')
 
+        // check if channel.parent.id is in this.channels
+        if (msg.channel.type === 'text') {
+          if (Object.values(this.parents).indexOf(msg.channel.parent.id) !== -1) {
+            // check for valide command
+            for (var command in this.commands) {
+              let regex = new RegExp(`^!${command}`)
+              if (regex.test(msg.content)) {
+                // exec command handler
+                return this.commands[command](msg)
+              }
+            }
           }
         }
+      },
+
+      request: msg => {
+        const embed = new discord.RichEmbed()
+          .addField('Usage:', '!request <request type>; <title>; <quality>; <preferred host>; <IMDB link>')
+          .addField('Example:', '!request Movie; Monsters Inc.; 1080p or higher, x265; MEGA; http://www.imdb.com/title/tt1319735')
+
+        msg.reply('You didn\'t fill out all of the items!', {embed})
       }
+    }
+
+    this.commands = {
+      request: this.handle.request,
+      test1: msg => msg.reply('1'),
+      test2: msg => msg.reply('2'),
+      test3: msg => msg.reply('3')
     }
   }
 
