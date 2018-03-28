@@ -1,0 +1,1 @@
+require('./modules/goodbot').init()
