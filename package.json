@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/JohnDeved/GoodBot#readme",
   "dependencies": {
-    "discord.js": "^11.3.2"
+    "chalk": "^2.3.2",
+    "discord.js": "^11.3.2",
+    "draftlog": "^1.0.12"
   }
 }
