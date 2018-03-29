@@ -119,7 +119,6 @@ class GoodBot {
           newEmbed.setColor('GREEN')
             .addBlankField()
             .addField('Filled By:', msg.author.toString())
-            .addField('Title:', title)
             .addField('Cryptobin:', cryptobin)
             .addField('Password:', '```megalinks```')
 
