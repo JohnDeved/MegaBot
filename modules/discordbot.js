@@ -72,7 +72,7 @@ class GoodBot {
         let [messageId, embedId] = requestId.split('-')
 
         const embedErr = new discord.RichEmbed()
-          .addField('Usage:', '!filled <request id>; <cryptobin-url>; <title>; optimal: <notes>')
+          .addField('Usage:', '!filled <request id>; <cryptobin-url>; <title>; optional:<notes>')
           .addField('Example:', '!filled 427912129794801664-427912129794805678; https://cryptobin.co/e2e4j6w6; tv show; reddit link => ...')
           .setColor('RED')
 
