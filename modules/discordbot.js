@@ -93,7 +93,7 @@ class GoodBot {
           .setThumbnail(msg.author.avatarURL)
           .addField('Filled By:', msg.author.toString())
           .addField('Title:', title)
-          .addField('CryptobinId:', cryptobin)
+          .addField('Cryptobin:', cryptobin)
           .addField('Password:', '```megalinks```')
 
         if (notes) {
@@ -109,17 +109,18 @@ class GoodBot {
             delete field.embed
           })
 
-          console.log(requestEmbed.author)
+          if (requestEmbed.fields.length + 5 > 25) { return }
 
           let newEmbed = new discord.RichEmbed({
             thumbnail: requestEmbed.thumbnail,
             fields: requestEmbed.fields
           })
+
           newEmbed.setColor('GREEN')
             .addBlankField()
             .addField('Filled By:', msg.author.toString())
             .addField('Title:', title)
-            .addField('CryptobinId:', cryptobin)
+            .addField('Cryptobin:', cryptobin)
             .addField('Password:', '```megalinks```')
 
           if (notes) {
