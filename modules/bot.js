@@ -35,7 +35,7 @@ class Bot {
         this.mood = 'awake'
       }
       let text = this.speak()
-      this.console(chalk.bold[this.mood !== 'sleeping' ? 'bgGreen' : 'bgYellow' ](this.name), text)
+      this.console(chalk.bold[this.mood !== 'sleeping' ? 'bgGreen' : 'bgYellow'](this.name), text)
     }
   }
 
