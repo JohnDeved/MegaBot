@@ -6,9 +6,9 @@ class GoodBot {
     this.bot = require('./bot')
 
     /*
-     * -- Define Handle Functions --
+     * -- Define Functions --
      */
-    this.handle = {
+    this.fnc = {
       ready: msg => {
         /*
          * -- Define Channels --
@@ -46,7 +46,7 @@ class GoodBot {
       },
 
       request: msg => {
-        let args = this.handle.parseArgs(msg)
+        let args = this.fnc.parseArgs(msg)
         const [type, title, quality, host, link] = args
 
         const embedErr = new discord.RichEmbed()
@@ -82,7 +82,7 @@ class GoodBot {
 
       filled: msg => {
         // parse command
-        let args = this.handle.parseArgs(msg)
+        let args = this.fnc.parseArgs(msg)
         let [requestId, cryptobin, title, notes] = args
 
         const embedErr = new discord.RichEmbed()
@@ -163,9 +163,9 @@ class GoodBot {
       /*
        * -- Define Commands --
        */
-      request: this.handle.request,
-      fill: this.handle.filled,
-      filled: this.handle.filled
+      request: this.fnc.request,
+      fill: this.fnc.filled,
+      filled: this.fnc.filled
     }
   }
 
@@ -173,8 +173,8 @@ class GoodBot {
     this.client.login(token)
 
     this.client.on('error', console.error)
-    this.client.on('ready', this.handle.ready)
-    this.client.on('message', this.handle.message)
+    this.client.on('ready', this.fnc.ready)
+    this.client.on('message', this.fnc.message)
   }
 }
 
