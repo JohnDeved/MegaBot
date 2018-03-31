@@ -45,7 +45,7 @@ class GoodBot {
           return msg.reply('You didn\'t fill out all of the items!', {embed: embedErr})
         }
 
-        if (!/[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/.test(link)) {
+        if (!/^[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(link)) {
           return msg.reply('invalide parameter: <relevant link>', {embed: embedErr})
         }
 
@@ -69,19 +69,23 @@ class GoodBot {
         let args = msg.content.split(';')
         args.forEach((el, i) => { args[i] = el.trim() })
         let [requestId, cryptobin, title, notes] = args
-        let [messageId, embedId] = requestId.split('-')
 
         const embedErr = new discord.RichEmbed()
           .addField('Usage:', '!filled <request id>; <cryptobin-url>; <title>; optional:<notes>')
           .addField('Example:', '!filled 427912129794801664-427912129794805678; https://cryptobin.co/e2e4j6w6; tv show; reddit link => ...')
           .setColor('RED')
 
+        if (!/^\d{18}-\d{18}$/.test(requestId)) {
+          return msg.reply('invalide parameter: <request id>', {embed: embedErr})
+        }
+        let [messageId, embedId] = requestId.split('-')
+
         if (args.length < 3) {
           return msg.reply('You didn\'t fill out all of the items!', {embed: embedErr})
         }
 
-        if (!/http(s)?:\/\/cryptobin\.co\/[\w\d]{8}/.test(cryptobin)) {
-          if (/[\w\d]{8}/.test(cryptobin)) {
+        if (!/^http(s)?:\/\/cryptobin\.co\/[\w\d]{8}$/.test(cryptobin)) {
+          if (/^[\w\d]{8}$/.test(cryptobin)) {
             cryptobin = `https://cryptobin.co/${cryptobin}`
           } else {
             return msg.reply('invalide parameter: <cryptobin-url>', {embed: embedErr})
