@@ -17,7 +17,6 @@ class GoodBot {
       },
 
       message: msg => {
-        // check if channel.parent.id is in this.channels
         if (msg.channel.type === 'text') {
           // check for valide command
           for (var command in this.commands) {
