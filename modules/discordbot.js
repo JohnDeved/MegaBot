@@ -157,6 +157,46 @@ class GoodBot {
           requestMsg.edit({embed: newEmbed})
         })
       }
+
+	  rm: msg => {
+	  	let args = msg.content.split(' ');
+	  	var currentChannel = false;
+	  	for (i = 0; i < args.length; i++) {
+	  		if (args[i] === '-c') {
+	  			currentChannel = true;
+	  			args.splice(i, 1);
+	  		}
+	  	}
+	  	if (currentChannel) {
+	  		for (var i = 0; i < args.length; i++) {
+	  			msg.channel.fetchMessage(args[i])
+	  			.then(delMsg => {
+	  				delMsg.delete();
+	  				msg.reply("deleted!")
+	  					.then(tmpMsg => {
+	  						setTimeout(function() {
+	  							tmpMsg.delete();
+	  						}, 5000);
+	  					});
+	  			});
+	  		}
+	  	} else {
+	  		for (var i = 0; i < args.length; i++) {
+	  			this.channels.requested.fetchMessage(args[i])
+	  			.then(delMsg => {
+	  				delMsg.delete();
+	  				msg.reply("deleted!")
+	  					.then(tmpMsg => {
+	  						setTimeout(function() {
+	  							tmpMsg.delete();
+	  						}, 5000);
+	  					});
+	  			});
+	  		}
+	  	}
+
+	  }
+
     }
 
     this.commands = {
@@ -165,7 +205,8 @@ class GoodBot {
        */
       request: this.fnc.request,
       fill: this.fnc.filled,
-      filled: this.fnc.filled
+      filled: this.fnc.filled,
+	  rm: this.fnc.rm
     }
   }
 
