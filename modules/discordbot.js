@@ -27,7 +27,7 @@ class GoodBot {
         if (msg.channel.type === 'text') {
           // check for valide command
           for (var command in this.commands) {
-            let regex = new RegExp(`^!${command}\b`)
+            let regex = new RegExp(`^!${command}\\b`)
             if (regex.test(msg.content)) {
               this.bot.work += 10
               msg.content = msg.content.replace(regex, '').trim()
@@ -156,47 +156,34 @@ class GoodBot {
           }
           requestMsg.edit({embed: newEmbed})
         })
+      },
+
+      rm: msg => {
+        let channel
+        let messageIds = []
+        let args = msg.content.split(' ')
+        args.forEach((el, i) => {
+          args[i] = el.trim()
+          if (/^\d{18}$/.test(args[i])) {
+            messageIds.push(args[i])
+          }
+        })
+
+        if (args.find(el => el === '-c')) {
+          channel = msg.channel
+        } else {
+          channel = this.channels.requested
+        }
+
+        messageIds.forEach(el => {
+          channel.fetchMessage(el)
+            .then(msg => {
+              msg.delete()
+              msg.reply('deleted!')
+                .then(reply => setTimeout(() => reply.delete(), 5000))
+            })
+        })
       }
-
-	  rm: msg => {
-	  	let args = msg.content.split(' ');
-	  	var currentChannel = false;
-	  	for (i = 0; i < args.length; i++) {
-	  		if (args[i] === '-c') {
-	  			currentChannel = true;
-	  			args.splice(i, 1);
-	  		}
-	  	}
-	  	if (currentChannel) {
-	  		for (var i = 0; i < args.length; i++) {
-	  			msg.channel.fetchMessage(args[i])
-	  			.then(delMsg => {
-	  				delMsg.delete();
-	  				msg.reply("deleted!")
-	  					.then(tmpMsg => {
-	  						setTimeout(function() {
-	  							tmpMsg.delete();
-	  						}, 5000);
-	  					});
-	  			});
-	  		}
-	  	} else {
-	  		for (var i = 0; i < args.length; i++) {
-	  			this.channels.requested.fetchMessage(args[i])
-	  			.then(delMsg => {
-	  				delMsg.delete();
-	  				msg.reply("deleted!")
-	  					.then(tmpMsg => {
-	  						setTimeout(function() {
-	  							tmpMsg.delete();
-	  						}, 5000);
-	  					});
-	  			});
-	  		}
-	  	}
-
-	  }
-
     }
 
     this.commands = {
@@ -206,7 +193,7 @@ class GoodBot {
       request: this.fnc.request,
       fill: this.fnc.filled,
       filled: this.fnc.filled,
-	  rm: this.fnc.rm
+      rm: this.fnc.rm
     }
   }
 
