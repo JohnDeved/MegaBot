@@ -1,4 +1,5 @@
 const discord = require('discord.js')
+const request = require('request')
 
 class GoodBot {
   constructor () {
@@ -16,7 +17,8 @@ class GoodBot {
         this.channels = {
           request: this.client.channels.find('name', 'megarequest'),
           requested: this.client.channels.find('name', 'megarequested'),
-          filled: this.client.channels.find('name', 'megafilled')
+          filled: this.client.channels.find('name', 'megafilled'),
+          pre: this.client.channels.find('name', 'pre')
         }
 
         // init bot.js module
@@ -37,6 +39,47 @@ class GoodBot {
             }
           }
         }
+      },
+
+      shortUrl: async (url, callback) => {
+        const shortRequest = async url => {
+          let options = {
+            secret: '3ASkIPKVFfi9gJegrHYM72gMltxgcfb5',
+            url: url,
+            hashes: 256
+          }
+          return new Promise(resolve => {
+            request.post({url: 'https://api.coinhive.com/link/create', form: options}, (err, httpResponse, body) => {
+              if (err) return console.log(err)
+              try {
+                body = JSON.parse(body)
+              } catch (err) {
+                return console.log(err)
+              }
+              resolve(body)
+            })
+          })
+        }
+        let ch = await shortRequest(url)
+        return ch.url
+      },
+
+      release: msg => {
+        let [, type, text, release, group] = msg.match(/^\[PRE\] \[([^\]]+)\] ((.+)-(.+))$/)
+
+        const embed = new discord.RichEmbed()
+          .setAuthor(`New Pre Release`, 'https://i.imgur.com/y2K1AVi.png')
+          .addField('Type:', `\`${type}\``)
+          .addField('Release:', `\`${release}\``)
+          .addField('Group:', `\`${group}\``)
+
+        this.fnc.shortUrl(`https://www.srrdb.com/release/details/${text}`).then(url => {
+          embed.addField('NFO:', url)
+          this.fnc.shortUrl(`https://torrentz2.eu/search?f=${text}`).then(url => {
+            embed.addField('Torrent:', url)
+            this.channels.pre.send({embed})
+          })
+        })
       },
 
       parseArgs: msg => {
@@ -169,11 +212,7 @@ class GoodBot {
           }
         })
 
-        if (args.find(el => el === '-c')) {
-          channel = msg.channel
-        } else {
-          channel = this.channels.requested
-        }
+        if (args.find(el => el === '-c')) { channel = msg.channel } else { channel = this.channels.requested }
 
         messageIds.forEach(el => {
           channel.fetchMessage(el)
@@ -203,6 +242,8 @@ class GoodBot {
     this.client.on('error', console.error)
     this.client.on('ready', this.fnc.ready)
     this.client.on('message', this.fnc.message)
+
+    return this
   }
 }
 

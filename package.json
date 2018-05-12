@@ -20,6 +20,8 @@
   "dependencies": {
     "chalk": "^2.3.2",
     "discord.js": "^11.3.2",
-    "draftlog": "^1.0.12"
+    "draftlog": "^1.0.12",
+    "irc": "^0.5.2",
+    "request": "^2.85.0"
   }
 }

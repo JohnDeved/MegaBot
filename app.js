@@ -1,3 +1,4 @@
 const config = require('./config')
 
-require('./modules/discordbot').init(config.token)
+const discord = require('./modules/discordbot').init(config.token)
+const irc = require('./modules/prebot').init(discord)
