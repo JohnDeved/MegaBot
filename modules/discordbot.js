@@ -142,11 +142,11 @@ class GoodBot {
       filled: msg => {
         // parse command
         let args = this.fnc.parseArgs(msg)
-        let [requestId, cryptobin, title, notes] = args
+        let [requestId, link, title, notes] = args
 
         const embedErr = new discord.RichEmbed()
-          .addField('Usage:', '!filled <request id>; <cryptobin-url>; <title>; optional:<notes>')
-          .addField('Example:', '!filled 427912129794801664-427912129794805678; https://cryptobin.co/e2e4j6w6; tv show; reddit link => ...')
+          .addField('Usage:', '!filled <request id>; <links.snahp.it-url>; <title>; optional:<notes>')
+          .addField('Example:', '!filled 427912129794801664-427912129794805678; https://links.snahp.it/duTOXhxpe9qO8g3m93LfGuJ8gFbRMUb1zjK; tv show; reddit link => ...')
           .setColor('RED')
 
         // check if request id is valide
@@ -161,12 +161,12 @@ class GoodBot {
           return msg.reply('You didn\'t fill out all of the items!', {embed: embedErr})
         }
 
-        // check if cryptobin parameter is valide site url or valide cryptobin-id
-        if (!/^http(s)?:\/\/cryptobin\.co\/[\w\d]{8}$/.test(cryptobin)) {
-          if (/^[\w\d]{8}$/.test(cryptobin)) {
-            cryptobin = `https://cryptobin.co/${cryptobin}`
+        // check if parameter is valide site url or valide id
+        if (!/^http(s)?:\/\/links\.snahp\.it\/[\w\d]{35}$/.test(link)) {
+          if (/^[\w\d]{35}$/.test(link)) {
+            link = `https://links.snahp.it/${link}`
           } else {
-            return msg.reply('invalide parameter: <cryptobin-url>', {embed: embedErr})
+            return msg.reply('invalide parameter: <links.snahp.it-url>', {embed: embedErr})
           }
         }
 
@@ -175,8 +175,7 @@ class GoodBot {
           .setThumbnail(msg.author.avatarURL)
           .addField('Filled By:', msg.author.toString())
           .addField('Title:', title)
-          .addField('Cryptobin:', cryptobin)
-          .addField('Password:', '```megalinks```')
+          .addField('Link:', link)
 
         // check if has notes parameter
         if (notes) {
@@ -207,7 +206,7 @@ class GoodBot {
           newEmbed.setColor('GREEN')
             .addBlankField()
             .addField('Filled By:', msg.author.toString())
-            .addField('Cryptobin:', cryptobin)
+            .addField('Link:', link)
             .addField('Password:', '```megalinks```')
 
           if (notes) {
