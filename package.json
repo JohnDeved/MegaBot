@@ -19,6 +19,7 @@
   "homepage": "https://github.com/JohnDeved/GoodBot#readme",
   "dependencies": {
     "chalk": "^2.3.2",
+    "cheerio": "^1.0.0-rc.2",
     "discord.js": "^11.3.2",
     "draftlog": "^1.0.12",
     "irc": "^0.5.2",

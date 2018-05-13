@@ -1,10 +1,10 @@
 const discord = require('discord.js')
+const cheerio = require('cheerio')
 const request = require('request')
 
 class GoodBot {
   constructor () {
     this.client = new discord.Client()
-    this.bot = require('./bot')
 
     /*
      * -- Define Functions --
@@ -18,11 +18,9 @@ class GoodBot {
           request: this.client.channels.find('name', 'megarequest'),
           requested: this.client.channels.find('name', 'megarequested'),
           filled: this.client.channels.find('name', 'megafilled'),
-          pre: this.client.channels.find('name', 'pre')
+          pre: this.client.channels.find('name', 'pre'),
+          rss: this.client.channels.find('name', 'rss')
         }
-
-        // init bot.js module
-        this.bot.init(this.client)
       },
 
       message: msg => {
@@ -31,7 +29,7 @@ class GoodBot {
           for (var command in this.commands) {
             let regex = new RegExp(`^!${command}\\b`)
             if (regex.test(msg.content)) {
-              this.bot.work += 10
+              // this.bot.work += 10
               msg.content = msg.content.replace(regex, '').trim()
 
               // call command handle function
@@ -44,7 +42,7 @@ class GoodBot {
       shortUrl: async (url, callback) => {
         const shortRequest = async url => {
           let options = {
-            secret: '3ASkIPKVFfi9gJegrHYM72gMltxgcfb5',
+            secret: this.config.coinhive,
             url: url,
             hashes: 256
           }
@@ -64,27 +62,40 @@ class GoodBot {
         return ch.url
       },
 
-      release: msg => {
-        let [, type, text, release, group] = msg.match(/^\[PRE\] \[([^\]]+)\] ((.+)-(.+))$/)
+      preRelease: msg => {
+        let [, type, release, group] = msg.match(/^\(PRE\) \(([^)]+)\) (.+-(.+))$/)
 
         const embed = new discord.RichEmbed()
           .setAuthor(`New Pre Release`, 'https://i.imgur.com/y2K1AVi.png')
           .addField('Type:', `\`${type}\``)
-          .addField('Release:', `\`${text}\``)
+          .addField('Release:', `\`${release}\``)
 
         this.fnc.shortUrl(`https://layer13.net/browse?q=@grp ${group}`).then(url => {
           embed.addField('Group:', `\`${group}\` - ${url}`)
-          this.fnc.shortUrl(`https://www.srrdb.com/release/details/${text}`).then(url => {
+          this.fnc.shortUrl(`https://www.srrdb.com/release/details/${release}`).then(url => {
             embed.addField('Srrdb:', url)
-            this.fnc.shortUrl(`https://layer13.net/browse?q=${text}`).then(url => {
+            this.fnc.shortUrl(`https://layer13.net/browse?q=${release}`).then(url => {
               embed.addField('Layer13:', url)
-              this.fnc.shortUrl(`https://torrentz2.eu/search?f=${text}`).then(url => {
+              this.fnc.shortUrl(`https://torrentz2.eu/search?f=${release}`).then(url => {
                 embed.addField('Torrent:', url)
                 this.channels.pre.send({embed})
               })
             })
           })
         })
+      },
+
+      rssRelease: rss => {
+        const $ = cheerio.load(rss.summary)
+
+        const embed = new discord.RichEmbed()
+          .setAuthor(`New Release by ${rss.author}`, 'https://i.imgur.com/y2K1AVi.png', `https://snahp.it/author/${rss.author}`)
+          .setThumbnail($('img').attr('src'))
+          .setTitle(rss.title)
+          .setURL(rss.guid)
+          .setFooter(rss.categories.join(', '))
+
+        this.channels.rss.send({embed})
       },
 
       parseArgs: msg => {
@@ -204,29 +215,6 @@ class GoodBot {
           }
           requestMsg.edit({embed: newEmbed})
         })
-      },
-
-      rm: msg => {
-        let channel
-        let messageIds = []
-        let args = msg.content.split(' ')
-        args.forEach((el, i) => {
-          args[i] = el.trim()
-          if (/^\d{18}$/.test(args[i])) {
-            messageIds.push(args[i])
-          }
-        })
-
-        if (args.find(el => el === '-c')) { channel = msg.channel } else { channel = this.channels.requested }
-
-        messageIds.forEach(el => {
-          channel.fetchMessage(el)
-            .then(msg => {
-              msg.delete()
-              msg.reply('deleted!')
-                .then(reply => setTimeout(() => reply.delete(), 5000))
-            })
-        })
       }
     }
 
@@ -236,13 +224,13 @@ class GoodBot {
        */
       request: this.fnc.request,
       fill: this.fnc.filled,
-      filled: this.fnc.filled,
-      rm: this.fnc.rm
+      filled: this.fnc.filled
     }
   }
 
-  init (token) {
-    this.client.login(token)
+  init (config) {
+    this.config = config
+    this.client.login(this.config.token)
 
     this.client.on('error', console.error)
     this.client.on('ready', this.fnc.ready)
