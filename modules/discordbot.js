@@ -207,7 +207,6 @@ class GoodBot {
             .addBlankField()
             .addField('Filled By:', msg.author.toString())
             .addField('Link:', link)
-            .addField('Password:', '```megalinks```')
 
           if (notes) {
             newEmbed.addField('Notes:', notes)
