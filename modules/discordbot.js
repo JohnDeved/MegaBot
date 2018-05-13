@@ -70,14 +70,19 @@ class GoodBot {
         const embed = new discord.RichEmbed()
           .setAuthor(`New Pre Release`, 'https://i.imgur.com/y2K1AVi.png')
           .addField('Type:', `\`${type}\``)
-          .addField('Release:', `\`${release}\``)
-          .addField('Group:', `\`${group}\``)
+          .addField('Release:', `\`${text}\``)
 
-        this.fnc.shortUrl(`https://www.srrdb.com/release/details/${text}`).then(url => {
-          embed.addField('NFO:', url)
-          this.fnc.shortUrl(`https://torrentz2.eu/search?f=${text}`).then(url => {
-            embed.addField('Torrent:', url)
-            this.channels.pre.send({embed})
+        this.fnc.shortUrl(`https://layer13.net/browse?q=@grp ${group}`).then(url => {
+          embed.addField('Group:', `\`${group}\` - ${url}`)
+          this.fnc.shortUrl(`https://www.srrdb.com/release/details/${text}`).then(url => {
+            embed.addField('Srrdb:', url)
+            this.fnc.shortUrl(`https://layer13.net/browse?q=${text}`).then(url => {
+              embed.addField('Layer13:', url)
+              this.fnc.shortUrl(`https://torrentz2.eu/search?f=${text}`).then(url => {
+                embed.addField('Torrent:', url)
+                this.channels.pre.send({embed})
+              })
+            })
           })
         })
       },

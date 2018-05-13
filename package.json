@@ -22,6 +22,7 @@
     "discord.js": "^11.3.2",
     "draftlog": "^1.0.12",
     "irc": "^0.5.2",
-    "request": "^2.85.0"
+    "request": "^2.85.0",
+    "rss-feed-emitter": "^2.0.0"
   }
 }

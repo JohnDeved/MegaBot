@@ -6,6 +6,7 @@ class Bot {
     this.random = () => Math.ceil(Math.random() * 10)
     this.timeout = 1000
     this.mood = 'awake'
+    this.log = ''
     this.work = 10
     this.frame = 0
     this.animate = {
@@ -22,7 +23,7 @@ class Bot {
         face: () => this.random() === 5 ? '(-o-)' : '(-~-)'
       }
     }
-    this.speak = () => `${this.animate[this.mood].face()} ${this.animate[this.mood].text()}`
+    this.speak = () => `${this.animate[this.mood].face()} ${this.animate[this.mood].text()}\n[LOG] ${this.log}`
     this.console = console.draft(chalk.bold.bgBlackBright('--Login--'), '...')
     this.refresh = () => {
       this.frame !== 3 ? this.frame++ : this.frame = 0
@@ -44,6 +45,8 @@ class Bot {
     this.name = this.client.user.tag
     this.client.user.setActivity('Chat', { type: 'LISTENING' })
     setInterval(this.refresh, this.timeout)
+    console.log('')
+    console.log = (...args) => { this.log = args.join(' ') }
   }
 }
 
