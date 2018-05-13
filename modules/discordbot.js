@@ -19,7 +19,7 @@ class GoodBot {
           requested: this.client.channels.find('name', 'megarequested'),
           filled: this.client.channels.find('name', 'megafilled'),
           pre: this.client.channels.find('name', 'pre'),
-          rss: this.client.channels.find('name', 'rss')
+          rss: this.client.channels.find('name', 'snahpit')
         }
       },
 
