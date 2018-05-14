@@ -2,7 +2,7 @@ const discord = require('discord.js')
 const cheerio = require('cheerio')
 const request = require('request')
 
-class GoodBot {
+class Discord {
   constructor () {
     this.client = new discord.Client()
 
@@ -236,4 +236,4 @@ class GoodBot {
   }
 }
 
-module.exports = new GoodBot()
+module.exports = new Discord()
