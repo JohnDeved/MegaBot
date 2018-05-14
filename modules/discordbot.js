@@ -134,7 +134,7 @@ class GoodBot {
           .addField('Relevant Link:', link)
 
         this.channels.requested.send({embed}).then(request => {
-          embed.addField('Request ID:', `${msg.id}-${request.id}`)
+          embed.addField('Request ID:', request.id)
           request.edit({embed})
         })
       },
@@ -146,15 +146,13 @@ class GoodBot {
 
         const embedErr = new discord.RichEmbed()
           .addField('Usage:', '!filled <request id>; <links.snahp.it-url>; <title>; optional:<notes>')
-          .addField('Example:', '!filled 427912129794801664-427912129794805678; https://links.snahp.it/duTOXhxpe9qO8g3m93LfGuJ8gFbRMUb1zjK; tv show; reddit link => ...')
+          .addField('Example:', '!filled 427912129794805678; https://links.snahp.it/duTOXhxpe9qO8g3m93LfGuJ8gFbRMUb1zjK; tv show; reddit link => ...')
           .setColor('RED')
 
         // check if request id is valide
-        if (!/^\d{18}-\d{18}$/.test(requestId)) {
+        if (!/^\d{18}$/.test(requestId)) {
           return msg.reply('invalide parameter: <request id>', {embed: embedErr})
         }
-        // parse request id
-        let [messageId, embedId] = requestId.split('-')
 
         // check if has enough args
         if (args.length < 3) {
@@ -184,7 +182,7 @@ class GoodBot {
 
         this.channels.filled.send({embed})
 
-        this.channels.requested.fetchMessage(embedId).then(requestMsg => {
+        this.channels.requested.fetchMessage(requestId).then(requestMsg => {
           let requestEmbed = requestMsg.embeds[0]
 
           // remove json circular structures
@@ -212,7 +210,7 @@ class GoodBot {
             newEmbed.addField('Notes:', notes)
           }
           requestMsg.edit({embed: newEmbed})
-        })
+        }).catch(console.error)
       }
     }
 
