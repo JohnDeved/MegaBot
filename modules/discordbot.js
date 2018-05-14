@@ -65,6 +65,12 @@ class Discord {
       preRelease: msg => {
         let [, type, release, group] = msg.match(/^\(PRE\) \(([^)]+)\) (.+-(.+))$/)
 
+        if (/xxx/i.test(type)) {
+          return console.log('exclude xxx:', msg)
+        } else if (/(german|swesub|dutch|danish|flemish|spanish|italian|french|finnish|polish|norwegian)/i.test(release)) {
+          return console.log('exclude foreign:', msg)
+        }
+
         const embed = new discord.RichEmbed()
           .setAuthor(`New Pre Release`, 'https://i.imgur.com/y2K1AVi.png')
           .addField('Type:', `\`${type}\``)
