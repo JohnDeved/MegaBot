@@ -14,12 +14,9 @@ class Discord {
         /*
          * -- Define Channels --
          */
-        this.channels = {
-          megabot: this.client.channels.find('name', 'mega-bot'),
-          requested: this.client.channels.find('name', 'mega-requested'),
-          filled: this.client.channels.find('name', 'mega-filled'),
-          pre: this.client.channels.find('name', 'pre'),
-          rss: this.client.channels.find('name', 'snahpit')
+        this.channels = {}
+        for (let channel in this.config.channels) {
+          this.channels[channel] = this.client.channels.find('name', this.config.channels[channel])
         }
       },
 
