@@ -15,16 +15,16 @@ class Discord {
          * -- Define Channels --
          */
         this.channels = {
-          request: this.client.channels.find('name', 'megarequest'),
-          requested: this.client.channels.find('name', 'megarequested'),
-          filled: this.client.channels.find('name', 'megafilled'),
+          megabot: this.client.channels.find('name', 'mega-bot'),
+          requested: this.client.channels.find('name', 'mega-requested'),
+          filled: this.client.channels.find('name', 'mega-filled'),
           pre: this.client.channels.find('name', 'pre'),
           rss: this.client.channels.find('name', 'snahpit')
         }
       },
 
       message: msg => {
-        if (msg.channel.type === 'text') {
+        if (msg.channel === this.channels.megabot) {
           // check for valide command
           for (var command in this.commands) {
             let regex = new RegExp(`^!${command}\\b`)
@@ -109,8 +109,8 @@ class Discord {
         const [type, title, quality, host, link] = args
 
         const embedErr = new discord.RichEmbed()
-          .addField('Usage:', '!request <request type>; <title>; <quality>; <preferred host>; <relevant link>')
-          .addField('Example:', '!request Movie; Monsters Inc.; 1080p or higher, x265; MEGA; http://www.imdb.com/title/tt1319735')
+          .addField('Usage:', '`!request <request type>; <title>; <quality>; <preferred host>; <relevant link>`')
+          .addField('Example:', '```!request Movie; Monsters Inc.; 1080p or higher, x265; MEGA; http://www.imdb.com/title/tt1319735```')
           .setColor('RED')
 
         // check if has enough args
@@ -134,7 +134,8 @@ class Discord {
           .addField('Relevant Link:', link)
 
         this.channels.requested.send({embed}).then(request => {
-          embed.addField('Request ID:', request.id)
+          msg.reply(`Your Request ID is \`${request.id}\``)
+          embed.addField('Request ID:', `\`${request.id}\``)
           request.edit({embed})
         })
       },
@@ -145,8 +146,8 @@ class Discord {
         let [requestId, link, title, notes] = args
 
         const embedErr = new discord.RichEmbed()
-          .addField('Usage:', '!filled <request id>; <links.snahp.it-url>; <title>; optional:<notes>')
-          .addField('Example:', '!filled 427912129794805678; https://links.snahp.it/duTOXhxpe9qO8g3m93LfGuJ8gFbRMUb1zjK; tv show; reddit link => ...')
+          .addField('Usage:', '`!fill <request id>; <links.snahp.it-url>; <title>; optional:<notes>`')
+          .addField('Example:', '`!fill 427912129794805678; https://links.snahp.it/duTOXhxpe9qO8g3m93LfGuJ8gFbRMUb1zjK; tv show; The Password is Cupcake`')
           .setColor('RED')
 
         // check if request id is valide
@@ -181,6 +182,7 @@ class Discord {
         }
 
         this.channels.filled.send({embed})
+        msg.reply(`Thank you for your Submission!`)
 
         this.channels.requested.fetchMessage(requestId).then(requestMsg => {
           let requestEmbed = requestMsg.embeds[0]
@@ -211,6 +213,16 @@ class Discord {
           }
           requestMsg.edit({embed: newEmbed})
         }).catch(console.error)
+      },
+
+      help: msg => {
+        const embedErr = new discord.RichEmbed()
+          .addField('Request:', '`!request` | `!r`')
+          .addField('Fill Request:', '`!fill` | `!filled` | `!f`')
+          .addField('Report Bugs:', '<@124948849893703680>')
+          .setFooter('https://github.com/JohnDeved/MegaBot')
+
+        return msg.reply({embed: embedErr})
       }
     }
 
@@ -218,7 +230,12 @@ class Discord {
       /*
        * -- Define Commands --
        */
+      help: this.fnc.help,
+
+      r: this.fnc.request,
       request: this.fnc.request,
+
+      f: this.fnc.filled,
       fill: this.fnc.filled,
       filled: this.fnc.filled
     }
