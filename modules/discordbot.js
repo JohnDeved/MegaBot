@@ -112,8 +112,8 @@ class Discord {
         const [type, title, quality, host, link] = args
 
         const embedErr = new discord.RichEmbed()
-          .addField('Usage:', '```!request \n<request type>; \n<title>; \n<quality>; \n<preferred host>; \n<relevant link>```')
-          .addField('Example:', '```!request \nMovie; \nMonsters Inc.; \n1080p or higher, x265; \nMEGA; \nhttp://www.imdb.com/title/tt1319735```')
+          .addField('Usage:', '```!request <request type>; \n<title>; \n<quality>; \n<preferred host>; \n<relevant link>```')
+          .addField('Example:', '```!request Movie; \nMonsters Inc.; \n1080p or higher, x265; \nMEGA; \nhttp://www.imdb.com/title/tt1319735```')
           .setColor('RED')
 
         // check if has enough args
@@ -150,7 +150,7 @@ class Discord {
 
         const embedErr = new discord.RichEmbed()
           .addField('Usage:', '```!fill <request id>; \n<links.snahp.it-url>; \n<title>; \noptional:<notes>```')
-          .addField('Example:', '```!fill \n427912129794805678; \nhttps://links.snahp.it/duTOXhxpe9qO8g3m93LfGuJ8gFbRMUb1zjK; \ntv show; \nThe Password is Cupcake```')
+          .addField('Example:', '```!fill 427912129794805678; \nhttps://links.snahp.it/duTOXhxpe9qO8g3m93LfGuJ8gFbRMUb1zjK; \ntv show; \nThe Password is Cupcake```')
           .setColor('RED')
 
         // check if request id is valide
@@ -184,8 +184,11 @@ class Discord {
           embed.addField('Notes:', notes)
         }
 
-        this.channels.filled.send({embed})
-        msg.reply(`Thank you for your Submission!`)
+        this.channels.filled.send({embed}).then(fill => {
+          msg.reply(`Thank you for your Submission! :thumbsup: Your Fill ID is \`${fill.id}\``)
+          embed.addField('Fill ID:', `\`${fill.id}\``)
+          fill.edit({embed})
+        })
 
         this.channels.requested.fetchMessage(requestId).then(requestMsg => {
           let requestEmbed = requestMsg.embeds[0]
@@ -215,13 +218,55 @@ class Discord {
             newEmbed.addField('Notes:', notes)
           }
           requestMsg.edit({embed: newEmbed})
-        }).catch(console.error)
+        }).catch(() => {
+          msg.reply(`Ups! Looks like there is no Request with that ID. :thinking: \nI still posted it in ${this.channels.filled.toString()} tho. If you want to Delete it, use the \`!remove\` command!`)
+        })
+      },
+
+      remove: msg => {
+        let args = this.fnc.parseArgs(msg)
+        let [id] = args
+
+        const embedErr = new discord.RichEmbed()
+          .addField('Usage:', '```!remove <request/fill id>```')
+          .addField('Example:', '```!remove 427912129794805678```')
+          .setColor('RED')
+
+        if (args.length < 1) {
+          return msg.reply('You didn\'t fill out all of the items!', {embed: embedErr})
+        }
+
+        if (!/^\d{18}$/.test(id)) {
+          return msg.reply('invalide parameter: <request id>', {embed: embedErr})
+        }
+
+        let deleteMessage = message => {
+          if (!message.deletable) {
+            return msg.reply('Sry, i couldnt delete that Message! :(')
+          }
+
+          message.user = message.embeds[0].fields[0].value
+          if (message.user !== msg.author.toString()) {
+            return msg.reply(`Hold on! That doesnt look like Your Request/Fill! :thinking: \nThis was made by ${message.user}. Maybe try contacting an Admin to delete this?`)
+          }
+
+          message.delete().then(() => {
+            msg.reply('Message has been Deleted!')
+          })
+        }
+
+        this.channels.requested.fetchMessage(id).then(deleteMessage).catch(() => {
+          this.channels.filled.fetchMessage(id).then(deleteMessage).catch(() => {
+            return msg.reply('Sry, i couldnt find a Message with that ID! :(')
+          })
+        })
       },
 
       help: msg => {
         const embedErr = new discord.RichEmbed()
           .addField('Request:', '`!request` | `!r`')
           .addField('Fill Request:', '`!fill` | `!filled` | `!f`')
+          .addField('Delete Your Request/Fill:', '`!rm` | `!remove`')
           .addField('Report Bugs:', '<@124948849893703680>')
           .setFooter('https://github.com/JohnDeved/MegaBot')
 
@@ -233,6 +278,7 @@ class Discord {
       /*
        * -- Define Commands --
        */
+      h: this.fnc.help,
       help: this.fnc.help,
 
       r: this.fnc.request,
@@ -240,7 +286,10 @@ class Discord {
 
       f: this.fnc.filled,
       fill: this.fnc.filled,
-      filled: this.fnc.filled
+      filled: this.fnc.filled,
+
+      rm: this.fnc.remove,
+      remove: this.fnc.remove
     }
   }
 
