@@ -225,16 +225,12 @@ class Discord {
 
       remove: msg => {
         let args = this.fnc.parseArgs(msg)
-        let [id] = args
+        let [id, force] = args
 
         const embedErr = new discord.RichEmbed()
           .addField('Usage:', '```!remove <request/fill id>```')
           .addField('Example:', '```!remove 427912129794805678```')
           .setColor('RED')
-
-        if (args.length < 1) {
-          return msg.reply('You didn\'t fill out all of the items!', {embed: embedErr})
-        }
 
         if (!/^\d{18}$/.test(id)) {
           return msg.reply('invalide parameter: <request id>', {embed: embedErr})
@@ -247,7 +243,9 @@ class Discord {
 
           message.user = message.embeds[0].fields[0].value
           if (message.user !== msg.author.toString()) {
-            return msg.reply(`Hold on! That doesnt look like Your Request/Fill! :thinking: \nThis was made by ${message.user}. Maybe try contacting an Admin to delete this?`)
+            if (!force === '-f' && !msg.author.toString === '<@124948849893703680>') {
+              return msg.reply(`Hold on! That doesnt look like Your Request/Fill! :thinking: \nThis was made by ${message.user}. Maybe try contacting an Admin to delete this?`)
+            }
           }
 
           message.delete().then(() => {
@@ -257,7 +255,7 @@ class Discord {
 
         this.channels.requested.fetchMessage(id).then(deleteMessage).catch(() => {
           this.channels.filled.fetchMessage(id).then(deleteMessage).catch(() => {
-            return msg.reply('Sry, i couldnt find a Message with that ID! :(')
+            return msg.reply('Sry, I couldnt find a Message with that ID! :(')
           })
         })
       },
