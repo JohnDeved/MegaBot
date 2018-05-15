@@ -1,5 +1,4 @@
 const RssFeedEmitter = require('rss-feed-emitter')
-const chalk = require('chalk')
 
 class RssBot {
   constructor () {

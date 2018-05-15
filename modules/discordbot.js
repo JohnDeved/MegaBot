@@ -188,38 +188,42 @@ class Discord {
           msg.reply(`Thank you for your Submission! :thumbsup: Your Fill ID is \`${fill.id}\``)
           embed.addField('Fill ID:', `\`${fill.id}\``)
           fill.edit({embed})
-        })
 
-        this.channels.requested.fetchMessage(requestId).then(requestMsg => {
-          let requestEmbed = requestMsg.embeds[0]
+          this.channels.requested.fetchMessage(requestId).then(requestMsg => {
+            let requestEmbed = requestMsg.embeds[0]
 
-          // remove json circular structures
-          delete requestEmbed.thumbnail.embed
-          requestEmbed.fields.forEach(field => {
-            delete field.embed
+            let [userId] = requestEmbed.fields[0].value.match(/\d+/)
+            let user = this.client.users.get(userId)
+            user.sendMessage('Good News _Everyone_! Looks like Somebody filled your Request!', {embed})
+
+            // remove json circular structures
+            delete requestEmbed.thumbnail.embed
+            requestEmbed.fields.forEach(field => {
+              delete field.embed
+            })
+
+            // check if embed has enough space for the new fields
+            if (requestEmbed.fields.length + 5 > 25) { return }
+
+            // create new embed using existing json data
+            let newEmbed = new discord.RichEmbed({
+              thumbnail: requestEmbed.thumbnail,
+              fields: requestEmbed.fields
+            })
+
+            // add Filled fields & Set color
+            newEmbed.setColor('GREEN')
+              .addBlankField()
+              .addField('Filled By:', msg.author.toString())
+              .addField('Link:', link)
+
+            if (notes) {
+              newEmbed.addField('Notes:', notes)
+            }
+            requestMsg.edit({embed: newEmbed})
+          }).catch(() => {
+            msg.reply(`Ups! Looks like there is no Request with that ID. :thinking: \nI still posted it in ${this.channels.filled.toString()} tho. If you want to Delete it, use the \`!remove\` command!`)
           })
-
-          // check if embed has enough space for the new fields
-          if (requestEmbed.fields.length + 5 > 25) { return }
-
-          // create new embed using existing json data
-          let newEmbed = new discord.RichEmbed({
-            thumbnail: requestEmbed.thumbnail,
-            fields: requestEmbed.fields
-          })
-
-          // add Filled fields & Set color
-          newEmbed.setColor('GREEN')
-            .addBlankField()
-            .addField('Filled By:', msg.author.toString())
-            .addField('Link:', link)
-
-          if (notes) {
-            newEmbed.addField('Notes:', notes)
-          }
-          requestMsg.edit({embed: newEmbed})
-        }).catch(() => {
-          msg.reply(`Ups! Looks like there is no Request with that ID. :thinking: \nI still posted it in ${this.channels.filled.toString()} tho. If you want to Delete it, use the \`!remove\` command!`)
         })
       },
 
@@ -261,6 +265,7 @@ class Discord {
       },
 
       help: msg => {
+        console.log(msg.author.id)
         const embedErr = new discord.RichEmbed()
           .addField('Request:', '`!request` | `!r`')
           .addField('Fill Request:', '`!fill` | `!filled` | `!f`')
