@@ -11,9 +11,9 @@ class Discord {
      */
     this.fnc = {
       ready: msg => {
-        /*
-         * -- Define Channels --
-         */
+        this.client.user.setAvatar('./static/logo.png')
+        this.client.user.setUsername('MegaBot')
+        this.client.user.setActivity('Chat', { type: 'LISTENING' })
         this.channels = {}
         for (let channel in this.config.channels) {
           this.channels[channel] = this.client.channels.find('name', this.config.channels[channel])
