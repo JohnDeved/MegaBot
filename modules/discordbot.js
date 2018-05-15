@@ -242,12 +242,15 @@ class Discord {
 
         let deleteMessage = message => {
           if (!message.deletable) {
-            return msg.reply('Sry, i couldnt delete that Message! :(')
+            return msg.reply('Sry, i couldnt delete that Message! :slight_frown:')
           }
 
           message.user = message.embeds[0].fields[0].value
           if (message.user !== msg.author.toString()) {
-            if (!force === '-f' && !msg.author.toString === '<@124948849893703680>') {
+            console.log(force, msg.author.toString())
+            if (force === '-f' && ['<@124948849893703680>', '<@314691826164695040>'].indexOf(msg.author.toString()) !== -1) {
+              msg.reply(`Not your Post but Granted!`)
+            } else {
               return msg.reply(`Hold on! That doesnt look like Your Request/Fill! :thinking: \nThis was made by ${message.user}. Maybe try contacting an Admin to delete this?`)
             }
           }
@@ -259,7 +262,7 @@ class Discord {
 
         this.channels.requested.fetchMessage(id).then(deleteMessage).catch(() => {
           this.channels.filled.fetchMessage(id).then(deleteMessage).catch(() => {
-            return msg.reply('Sry, I couldnt find a Message with that ID! :(')
+            return msg.reply('Sry, I couldnt find a Message with that ID! :slight_frown:')
           })
         })
       },

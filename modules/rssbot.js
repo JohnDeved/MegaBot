@@ -15,6 +15,7 @@ class RssBot {
     })
 
     setTimeout(() => {
+      console.info('Listening to RSS Feed now')
       this.feeder.on('new-item', (item) => {
         this.discord.fnc.rssRelease(item)
       })
