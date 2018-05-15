@@ -247,7 +247,6 @@ class Discord {
 
           message.user = message.embeds[0].fields[0].value
           if (message.user !== msg.author.toString()) {
-            console.log(force, msg.author.toString())
             if (force === '-f' && ['<@124948849893703680>', '<@314691826164695040>'].indexOf(msg.author.toString()) !== -1) {
               msg.reply(`Not your Post but Granted!`)
             } else {
