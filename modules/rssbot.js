@@ -14,9 +14,11 @@ class RssBot {
       refresh: 2000
     })
 
-    this.feeder.on('new-item', (item) => {
-      this.discord.fnc.rssRelease(item)
-    })
+    setTimeout(() => {
+      this.feeder.on('new-item', (item) => {
+        this.discord.fnc.rssRelease(item)
+      })
+    }, 10 * 1000)
 
     return this
   }
