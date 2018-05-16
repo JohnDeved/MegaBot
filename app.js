@@ -17,7 +17,3 @@ let handleLog = (...args) => {
 }
 console.log = handleLog
 console.error = handleLog
-
-let obj = {a: 1}
-obj.obj = obj
-console.log(obj)
