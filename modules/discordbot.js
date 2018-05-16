@@ -107,6 +107,19 @@ class Discord {
         return args
       },
 
+      addID: (msg, embed, id, isRequest) => {
+        embed.addField(isRequest ? 'Request ID:' : 'Fill ID:', `\`${id}\``)
+        let edit = () => {
+          msg.edit({embed}).then(msg => {
+            console.log(id, 'is same size:', msg.embeds[0].fields.length === embed.fields.length)
+            if (!msg.embeds[0].fields.length >= embed.fields.length) {
+              edit()
+            }
+          }).catch(console.error)
+        }
+        edit()
+      },
+
       request: msg => {
         let args = this.fnc.parseArgs(msg)
         const [type, title, quality, host, link] = args
@@ -138,8 +151,7 @@ class Discord {
 
         this.channels.requested.send({embed}).then(request => {
           msg.reply(`Your Request ID is \`${request.id}\``)
-          embed.addField('Request ID:', `\`${request.id}\``)
-          request.edit({embed})
+          this.fnc.addID(request, embed, request.id, true)
         })
       },
 
@@ -186,15 +198,14 @@ class Discord {
 
         this.channels.filled.send({embed}).then(fill => {
           msg.reply(`Thank you for your Submission! :thumbsup: Your Fill ID is \`${fill.id}\``)
-          embed.addField('Fill ID:', `\`${fill.id}\``)
-          fill.edit({embed})
+          this.fnc.addID(fill, embed, fill.id, false)
 
           this.channels.requested.fetchMessage(requestId).then(requestMsg => {
             let requestEmbed = requestMsg.embeds[0]
 
             let [userId] = requestEmbed.fields[0].value.match(/\d+/)
             let user = this.client.users.get(userId)
-            user.sendMessage('Good News _Everyone_! Looks like Somebody filled your Request!', {embed})
+            user.send('Good News _Everyone_! Looks like Somebody filled your Request!', {embed})
 
             // remove json circular structures
             delete requestEmbed.thumbnail.embed
@@ -221,7 +232,8 @@ class Discord {
               newEmbed.addField('Notes:', notes)
             }
             requestMsg.edit({embed: newEmbed})
-          }).catch(() => {
+          }).catch(err => {
+            console.error(err)
             msg.reply(`Ups! Looks like there is no Request with that ID. :thinking: \nI still posted it in ${this.channels.filled.toString()} tho. If you want to Delete it, use the \`!remove\` command!`)
           })
         })
@@ -267,7 +279,6 @@ class Discord {
       },
 
       help: msg => {
-        console.log(msg.author.id)
         const embedErr = new discord.RichEmbed()
           .addField('Request:', '`!request` | `!r`')
           .addField('Fill Request:', '`!fill` | `!filled` | `!f`')
