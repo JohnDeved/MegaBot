@@ -107,12 +107,12 @@ class Discord {
         return args
       },
 
-      addID: (msg, oldEmbed, id, isRequest) => {
-        let embed = oldEmbed
+      addID: (msg, embed, id, isRequest) => {
+        let oldLength = embed.length
         embed.addField(isRequest ? 'Request ID:' : 'Fill ID:', `\`${id}\``)
-        if (embed.fields.length === oldEmbed.fields.length) {
+        if (embed.fields.length === oldLength) {
           console.log(id, 'Field didnt get added!')
-          return this.fnc.editID(msg, oldEmbed, id, isRequest)
+          return this.fnc.addID(msg, embed, id, isRequest)
         }
         let edit = () => {
           msg.edit({embed}).then(msg => {
