@@ -103,7 +103,8 @@ class Discord {
 
       parseArgs: msg => {
         let args = msg.content.split(';')
-        args.forEach((el, i) => { args[i] = el.trim() })
+        args = args.map(el => el.trim())
+        args = args.filter(el => el !== '')
         return args
       },
 
