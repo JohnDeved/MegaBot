@@ -88,17 +88,28 @@ class Discord {
         })
       },
 
-      rssRelease: rss => {
-        const $ = cheerio.load(rss.summary)
+      rssRelease: {
+        blog: rss => {
+          const $ = cheerio.load(rss.summary)
 
-        const embed = new discord.RichEmbed()
-          .setAuthor(`New Release by ${rss.author}`, 'https://i.imgur.com/y2K1AVi.png', `https://snahp.it/author/${rss.author}`)
-          .setThumbnail($('img').attr('src'))
-          .setTitle(rss.title)
-          .setURL(rss.guid)
-          .setFooter(rss.categories.join(', '))
+          const embed = new discord.RichEmbed()
+            .setAuthor(`New Release by ${rss.author}`, 'https://i.imgur.com/y2K1AVi.png', `https://snahp.it/author/${rss.author}`)
+            .setThumbnail($('img').attr('src'))
+            .setTitle(rss.title)
+            .setURL(rss.guid)
+            .setFooter(rss.categories.join(', '))
 
-        this.channels.rss.send({embed})
+          this.channels.rssBlog.send({embed})
+        },
+        forum: rss => {
+          console.log(rss)
+
+          const embed = new discord.RichEmbed()
+            .setTitle(rss.title)
+            .setURL(rss.guid)
+
+          this.channels.rssForum.send({embed})
+        }
       },
 
       parseArgs: msg => {

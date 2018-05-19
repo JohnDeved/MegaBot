@@ -9,15 +9,18 @@ class RssBot {
     this.discord = discord
     this.config = this.discord.config
 
-    this.feeder.add({
-      url: this.config.rss,
-      refresh: 2000
+    this.config.rss.forEach(rss => {
+      this.feeder.add({
+        url: rss.link,
+        refresh: 2000
+      })
     })
 
     setTimeout(() => {
       console.info('Listening to RSS Feed now')
-      this.feeder.on('new-item', (item) => {
-        this.discord.fnc.rssRelease(item)
+      this.feeder.on('new-item', item => {
+        let rss = this.config.rss.find(obj => obj.link === item.meta.link)
+        this.discord.fnc.rssRelease[rss.name](item)
       })
     }, 10 * 1000)
 
