@@ -19,7 +19,7 @@ class PreBot {
     this.discord = discord
     this.config = this.discord.config
     this.client = new irc.Client(this.config.irc.ip, this.config.irc.userName, this.config.irc)
-    this.client.addListener('registered', msg => console.log('Connected to', chalk.green(msg.server)))
+    this.client.addListener('registered', msg => console.log('Connected to', chalk.green(msg.server), 'as', chalk.green(this.client.nick)))
     this.client.addListener('error', msg => console.log('irc error: ', chalk.red(msg)))
     this.client.addListener('message', this.handleIrc)
 
