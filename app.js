@@ -10,8 +10,7 @@ require('./modules/rssbot').init(discord)
 
 process.stdout.w = process.stdout.write
 let log = fs.createWriteStream('./node.log')
-process.stdout.write = process.stderr.write = (...args) => {
-  let [out] = args
+process.stdout.write = process.stderr.write = out => {
   process.stdout.w(out)
   log.write(out.replace(/\u001B\[\d+m/g, ''))
 }
