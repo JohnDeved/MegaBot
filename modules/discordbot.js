@@ -102,8 +102,6 @@ class Discord {
           this.channels.rssBlog.send({embed})
         },
         forum: rss => {
-          console.log(rss)
-
           const embed = new discord.RichEmbed()
             .setTitle(rss.title)
             .setURL(rss.guid)
