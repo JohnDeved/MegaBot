@@ -16,7 +16,7 @@ process.stdout.write = process.stderr.write = (...args) => {
   log.write(out.replace(/\u001B\[\d+m/g, ''))
 }
 
-nodeCleanup(function (exitCode, signal) {
+nodeCleanup((exitCode, signal) => {
   console.log('starting Cleanup')
   irc.client.disconnect('Ill be back.', () => {
     console.log('Disconected Irc')
