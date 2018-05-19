@@ -204,7 +204,7 @@ class Discord {
         if (!/^http(s)?:\/\/links\.snahp\.it\/[\w\d]{35}$/.test(link)) {
           if (/^[\w\d]{35}$/.test(link)) {
             link = `https://links.snahp.it/${link}`
-          } else {
+          } else if (!/^http(s)?:\/\/forum\.snahp\.it\/viewtopic\.php\?(f=\d+|&|t=\d+|p=\d+|#p\d+)+$/.test(link)) {
             return msg.reply('invalide parameter: <links.snahp.it-url>', {embed: embedErr})
           }
         }
