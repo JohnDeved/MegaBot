@@ -117,28 +117,20 @@ class Discord {
         return args
       },
 
-      addID: (msg, embed, id, isRequest) => {
-        let oldLength = embed.length
-        embed.addField(isRequest ? 'Request ID:' : 'Fill ID:', `\`${id}\``)
-        if (embed.fields.length === oldLength) {
-          console.log(id, 'Field didnt get added!')
-          return setTimeout(() => {
-            this.fnc.addID(msg, embed, id, isRequest)
-          }, 1000)
+      addID: (msg, embed, isRequest) => {
+        if (!embed.fields.find(x => /^(Fill ID|Request ID):$/.test(x.name))) {
+          embed.addField(isRequest ? 'Request ID:' : 'Fill ID:', `\`${msg.id}\``)
         }
-        let edit = () => {
-          setTimeout(() => {
-            msg.edit({embed}).then(msg => {
-              console.log(id, 'is same size:', msg.embeds[0].fields.length === embed.fields.length)
-              if (!msg.embeds[0].fields.length >= embed.fields.length) {
-                return setTimeout(() => {
-                  edit()
-                }, 1000)
+        setTimeout(() => {
+          msg.edit({embed}).then(msg => {
+            setTimeout(() => {
+              if (!msg.embeds[0].fields.find(x => /^(Fill ID|Request ID):$/.test(x.name))) {
+                console.log(msg.id, 'missing ID field')
+                this.fnc.addID(msg, embed, isRequest)
               }
-            }).catch(console.error)
-          }, 1000)
-        }
-        edit()
+            }, 1000)
+          }).catch(console.error)
+        }, 1000)
       },
 
       request: msg => {
@@ -173,7 +165,7 @@ class Discord {
         this.channels.requested.send({embed}).then(request => {
           msg.reply(`Your Request ID is \`${request.id}\``)
           setTimeout(() => {
-            this.fnc.addID(request, embed, request.id, true)
+            this.fnc.addID(request, embed, true)
           }, 1000)
         })
       },
@@ -222,7 +214,7 @@ class Discord {
         this.channels.filled.send({embed}).then(fill => {
           msg.reply(`Thank you for your Submission! :thumbsup: Your Fill ID is \`${fill.id}\``)
           setTimeout(() => {
-            this.fnc.addID(fill, embed, fill.id, false)
+            this.fnc.addID(fill, embed, false)
           }, 1000)
 
           this.channels.requested.fetchMessage(requestId).then(requestMsg => {
