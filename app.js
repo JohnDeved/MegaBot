@@ -1,12 +1,14 @@
 const fs = require('fs')
-const config = require('./config')
 const nodeCleanup = require('node-cleanup')
 
-const discord = require('./modules/discordbot').init(config)
+const bot = {}
+bot.config = require('./config')
+bot.git = require('simple-git')()
 
-// require('./modules/bot').init(discord)
-const irc = require('./modules/prebot').init(discord)
-require('./modules/rssbot').init(discord)
+bot.discord = require('./modules/discordbot').init(bot)
+
+bot.irc = require('./modules/prebot').init(bot)
+bot.rss = require('./modules/rssbot').init(bot)
 
 process.stdout.w = process.stdout.write
 let log = fs.createWriteStream('./node.log')

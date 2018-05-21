@@ -326,8 +326,9 @@ class Discord {
     }
   }
 
-  init (config) {
-    this.config = config
+  init (bot) {
+    this.bot = bot
+    this.config = this.bot.config
     this.client.login(this.config.token)
 
     this.client.on('error', console.error)

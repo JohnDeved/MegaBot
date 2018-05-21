@@ -5,9 +5,10 @@ class RssBot {
     this.feeder = new RssFeedEmitter()
   }
 
-  init (discord) {
-    this.discord = discord
-    this.config = this.discord.config
+  init (bot) {
+    this.bot = bot
+    this.discord = this.bot.discord
+    this.config = this.bot.config
 
     this.config.rss.forEach(rss => {
       this.feeder.add({
