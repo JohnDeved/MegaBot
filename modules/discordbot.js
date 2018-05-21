@@ -248,19 +248,13 @@ class Discord {
             user.send('Good News _Everyone_! Looks like Somebody filled your Request!', {embed})
 
             // remove json circular structures
-            delete requestEmbed.thumbnail.embed
-            requestEmbed.fields.forEach(field => {
-              delete field.embed
-            })
+            requestEmbed = this.fnc.embed2json(requestEmbed)
 
             // check if embed has enough space for the new fields
             if (requestEmbed.fields.length + 5 > 25) { return }
 
             // create new embed using existing json data
-            let newEmbed = new discord.RichEmbed({
-              thumbnail: requestEmbed.thumbnail,
-              fields: requestEmbed.fields
-            })
+            let newEmbed = new discord.RichEmbed(requestEmbed)
 
             // add Filled fields & Set color
             newEmbed.setColor('GREEN')
