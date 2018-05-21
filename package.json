@@ -24,7 +24,8 @@
     "draftlog": "^1.0.12",
     "irc": "^0.5.2",
     "node-cleanup": "^2.1.2",
-    "request": "^2.86.0",
-    "rss-feed-emitter": "^2.0.0"
+    "request": "^2.87.0",
+    "rss-feed-emitter": "^2.0.0",
+    "simple-git": "^1.92.0"
   }
 }
