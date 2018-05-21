@@ -13,7 +13,10 @@ class Discord {
       ready: msg => {
         this.client.user.setAvatar('./static/logo.png')
         this.client.user.setUsername('MegaBot')
-        this.client.user.setActivity('Chat', { type: 'LISTENING' })
+        this.bot.git.revparse(['HEAD'], (err, hash) => {
+          if (err) { return console.error(err) }
+          this.client.user.setActivity(`Chat | ${hash.slice(0, 7)}`, { type: 'LISTENING' })
+        })
         this.channels = {}
         for (let channel in this.config.channels) {
           this.channels[channel] = this.client.channels.find('name', this.config.channels[channel])
