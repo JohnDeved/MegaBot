@@ -279,7 +279,7 @@ class Discord {
 
           message.user = message.embeds[0].fields[0].value
           if (message.user !== msg.author.toString()) {
-            if (force === '-f' && ['<@124948849893703680>', '<@314691826164695040>'].indexOf(msg.author.toString()) !== -1) {
+            if (force === '-f' && ['124948849893703680', '314691826164695040'].indexOf(msg.author.id) !== -1) {
               msg.reply(`Not your Post but Granted!`)
             } else {
               return msg.reply(`Hold on! That doesnt look like Your Request/Fill! :thinking: \nThis was made by ${message.user}. Maybe try contacting an Admin to delete this?`)
@@ -296,6 +296,27 @@ class Discord {
             return msg.reply('Sry, I couldnt find a Message with that ID! :slight_frown:')
           })
         })
+      },
+
+      pull: msg => {
+        if (['124948849893703680', '314691826164695040'].indexOf(msg.author.id) !== -1) {
+          this.bot.git.pull((err, pull) => {
+            if (err) { return console.error(err) }
+            msg.reply(`\`\`\`JSON\n${JSON.stringify(pull, null, 2)}\`\`\``)
+          })
+          this.bot.git.revparse(['HEAD'], (err, hash) => {
+            if (err) { return console.error(err) }
+            msg.reply(`\`\`\`js\n'${hash.trim()}'\`\`\``)
+          })
+        }
+      },
+
+      restart: msg => {
+        if (['124948849893703680', '314691826164695040'].indexOf(msg.author.id) !== -1) {
+          msg.reply('restarting').then(() => {
+            process.exit(0)
+          })
+        }
       },
 
       help: msg => {
@@ -325,7 +346,10 @@ class Discord {
       filled: this.fnc.filled,
 
       rm: this.fnc.remove,
-      remove: this.fnc.remove
+      remove: this.fnc.remove,
+
+      pull: this.fnc.pull,
+      restart: this.fnc.restart
     }
   }
 

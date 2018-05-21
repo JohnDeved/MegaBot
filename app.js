@@ -18,8 +18,6 @@ process.stdout.write = process.stderr.write = out => {
 }
 
 nodeCleanup((exitCode, signal) => {
-  console.log('starting Cleanup')
-  irc.client.disconnect('Ill be back.', () => {
-    console.log('Disconected Irc')
-  })
+  bot.irc.client.disconnect('Ill be back.')
+  process.kill(process.pid)
 })
