@@ -193,6 +193,48 @@ class Discord {
         })
       },
 
+      watch: msg => {
+        let args = this.fnc.parseArgs(msg)
+        let [id] = args
+
+        const embedErr = new discord.RichEmbed()
+          .addField('Usage:', '```!watch <request id>```')
+          .addField('Example:', '```!watch 427912129794805678```')
+          .setColor('RED')
+
+        if (!/^\d{18}$/.test(id)) {
+          return msg.reply('invalide parameter: <request id>', {embed: embedErr})
+        }
+
+        this.channels.requested.fetchMessage(id).then(request => {
+          let embed = this.fnc.embed2json(request.embeds[0])
+          let i = embed.fields.findIndex(x => x.name === 'Watchers:')
+
+          let watchers = []
+          if (i !== -1) {
+            watchers = embed.fields[i].value.split(', ')
+            if (watchers.indexOf(msg.author.toString() !== -1)) {
+              return msg.reply('You are allready Watching this Request! :thinking:')
+            }
+
+            watchers.push(msg.author.toString())
+            embed.fields[i].value = watchers.join(', ')
+          } else {
+            watchers.push(msg.author.toString())
+            embed.fields.push({
+              name: 'Watchers:',
+              value: watchers.join(', ')
+            })
+          }
+
+          request.edit({embed})
+          return msg.reply(`You are now gonna be notified if the Request \`${request.id}\` gets Filled! :thumbsup:`)
+        }).catch(err => {
+          console.error(err)
+          return msg.reply('Sry, I couldnt find a Message with that ID! :slight_frown:')
+        })
+      },
+
       filled: msg => {
         // parse command
         let args = this.fnc.parseArgs(msg)
@@ -243,9 +285,15 @@ class Discord {
           this.channels.requested.fetchMessage(requestId).then(requestMsg => {
             let requestEmbed = requestMsg.embeds[0]
 
-            let [userId] = requestEmbed.fields[0].value.match(/\d+/)
-            let user = this.client.users.get(userId)
-            user.send('Good News _Everyone_! Looks like Somebody filled your Request!', {embed})
+            let watchers = requestEmbed.fields.find(x => x.name === 'Watchers:')
+            console.log(watchers)
+            watchers = watchers.value.split(', ')
+            watchers.push(requestEmbed.fields[0].value)
+            watchers.forEach(watcher => {
+              let [userId] = watcher.match(/\d+/)
+              let user = this.client.users.get(userId)
+              user.send('Good News _Everyone_! Looks like Somebody filled your Request!', {embed})
+            })
 
             // remove json circular structures
             requestEmbed = this.fnc.embed2json(requestEmbed)
@@ -335,9 +383,10 @@ class Discord {
 
       help: msg => {
         const embedErr = new discord.RichEmbed()
-          .addField('Request:', '`!request` | `!r`')
-          .addField('Fill Request:', '`!fill` | `!filled` | `!f`')
+          .addField('Request:', '`!r` | `!request`')
+          .addField('Fill Request:', '`!f` | `!fill` | `!filled`')
           .addField('Delete Your Request/Fill:', '`!rm` | `!remove`')
+          .addField('Watch Request:', '`!w` | `!watch`')
           .addField('Report Bugs:', '<@124948849893703680>')
           .setFooter('https://github.com/JohnDeved/MegaBot')
 
@@ -358,6 +407,9 @@ class Discord {
       f: this.fnc.filled,
       fill: this.fnc.filled,
       filled: this.fnc.filled,
+
+      w: this.fnc.watch,
+      watch: this.fnc.watch,
 
       rm: this.fnc.remove,
       remove: this.fnc.remove,

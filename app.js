@@ -19,7 +19,11 @@ process.stdout.write = process.stderr.write = out => {
   if (bot.discord) {
     if (bot.discord.channels) {
       if (bot.discord.channels.dev) {
-        bot.discord.channels.dev.send(`\`\`\`JSON\n${out}\`\`\``)
+        if (out.length < 2000) {
+          bot.discord.channels.dev.send(`\`\`\`bat\n${out}\`\`\``)
+        } else {
+          bot.discord.channels.dev.send(`\`\`\`bat\n${out.slice(0, 1962)}...\n[Log too big to Display]\`\`\``)
+        }
       }
     }
   }
