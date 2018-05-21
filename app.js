@@ -14,7 +14,15 @@ process.stdout.w = process.stdout.write
 let log = fs.createWriteStream('./node.log')
 process.stdout.write = process.stderr.write = out => {
   process.stdout.w(out)
-  log.write(out.replace(/\u001B\[\d+m/g, ''))
+  out = out.replace(/\u001B\[\d+m/g, '')
+  log.write(out)
+  if (bot.discord) {
+    if (bot.discord.channels) {
+      if (bot.discord.channels.dev) {
+        bot.discord.channels.dev.send(`\`\`\`JSON\n${out}\`\`\``)
+      }
+    }
+  }
 }
 
 nodeCleanup((exitCode, signal) => {
