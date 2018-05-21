@@ -1,6 +1,7 @@
 const discord = require('discord.js')
 const cheerio = require('cheerio')
 const request = require('request')
+const stringify = require('json-stringify-safe')
 
 class Discord {
   constructor () {
@@ -111,6 +112,25 @@ class Discord {
 
           this.channels.rssForum.send({embed})
         }
+      },
+
+      embed2json: embed => {
+        embed = stringify(embed, null, 2)
+        embed = JSON.parse(embed)
+
+        let embedJson = {}
+        embedJson.fields = embed.fields
+
+        if (embed.author) {
+          embedJson.author = {}
+          embedJson.author.name = embed.author.name
+          embedJson.author.url = embed.author.url
+          embedJson.author.icon_url = embed.author.iconURL
+        }
+
+        embedJson.thumbnail = embed.thumbnail
+
+        return embedJson
       },
 
       parseArgs: msg => {

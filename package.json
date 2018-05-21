@@ -23,6 +23,7 @@
     "discord.js": "^11.3.2",
     "draftlog": "^1.0.12",
     "irc": "^0.5.2",
+    "json-stringify-safe": "^5.0.1",
     "node-cleanup": "^2.1.2",
     "request": "^2.87.0",
     "rss-feed-emitter": "^2.0.0",
