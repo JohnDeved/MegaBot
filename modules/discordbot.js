@@ -28,7 +28,7 @@ class Discord {
         if (msg.channel === this.channels.megabot) {
           // check for valide command
           for (var command in this.commands) {
-            let regex = new RegExp(`^!${command}\\b`)
+            let regex = new RegExp(`^!${command}\\b`, 'i')
             if (regex.test(msg.content)) {
               // this.bot.work += 10
               msg.content = msg.content.replace(regex, '').trim()
