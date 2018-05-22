@@ -389,6 +389,10 @@ class Discord {
             if (err) { return console.error(err) }
             msg.reply(`\`\`\`JSON\n${JSON.stringify(pull, null, 2)}\`\`\``)
           })
+          this.bot.git.log(['--oneline', '-1'], (err, log) => {
+            if (err) { return console.error(err) }
+            msg.reply(`\`\`\`js\n'${log.latest.hash}'\`\`\``)
+          })
           this.bot.git.revparse(['HEAD'], (err, hash) => {
             if (err) { return console.error(err) }
             msg.reply(`\`\`\`js\n'${hash.trim()}'\`\`\``)
