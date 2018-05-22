@@ -193,13 +193,14 @@ class Discord {
         })
       },
 
-      watch: msg => {
+      unwatch: msg => this.fnc.watch(msg, true),
+      watch: (msg, isUnwatch) => {
         let args = this.fnc.parseArgs(msg)
         let [id] = args
 
         const embedErr = new discord.RichEmbed()
-          .addField('Usage:', '```!watch <request id>```')
-          .addField('Example:', '```!watch 427912129794805678```')
+          .addField('Usage:', '```!' + (isUnwatch ? 'un' : '') + 'watch <request id>```')
+          .addField('Example:', '```!' + (isUnwatch ? 'un' : '') + 'watch 427912129794805678```')
           .setColor('RED')
 
         if (!/^\d{18}$/.test(id)) {
@@ -208,27 +209,49 @@ class Discord {
 
         this.channels.requested.fetchMessage(id).then(request => {
           let embed = this.fnc.embed2json(request.embeds[0])
+
+          if (embed.fields[0].value === msg.author.toString()) {
+            return msg.reply('As the Author of this Request you will allready be notified if the Request is Filled!')
+          }
+
           let i = embed.fields.findIndex(x => x.name === 'Watchers:')
 
           let watchers = []
           if (i !== -1) {
             watchers = embed.fields[i].value.split(', ')
             if (watchers.indexOf(msg.author.toString()) !== -1) {
-              return msg.reply('You are allready Watching this Request! :thinking:')
+              if (isUnwatch) {
+                watchers = watchers.filter(x => x !== msg.author.toString())
+              } else {
+                return msg.reply('You are allready Watching this Request! :thinking:')
+              }
+            } else if (isUnwatch) {
+              return msg.reply('You are not a Watcher!')
+            } else {
+              watchers.push(msg.author.toString())
             }
 
-            watchers.push(msg.author.toString())
             embed.fields[i].value = watchers.join(', ')
           } else {
-            watchers.push(msg.author.toString())
-            embed.fields.push({
-              name: 'Watchers:',
-              value: watchers.join(', ')
-            })
+            if (isUnwatch) {
+              return msg.reply('There are no Watchers!')
+            } else {
+              watchers.push(msg.author.toString())
+              embed.fields.push({
+                name: 'Watchers:',
+                value: watchers.join(', ')
+              })
+            }
           }
 
+          embed.fields = embed.fields.filter(x => x.value !== '')
+
           request.edit({embed})
-          return msg.reply(`You are now gonna be notified if the Request \`${request.id}\` gets Filled! :thumbsup:`)
+          if (isUnwatch) {
+            return msg.reply(`You are no longer watching the Request \`${request.id}\``)
+          } else {
+            return msg.reply(`You are now gonna be notified if the Request \`${request.id}\` gets Filled! :thumbsup:`)
+          }
         }).catch(err => {
           console.error(err)
           return msg.reply('Sry, I couldnt find a Message with that ID! :slight_frown:')
@@ -387,6 +410,7 @@ class Discord {
           .addField('Fill Request:', '`!f` | `!fill` | `!filled`')
           .addField('Delete Your Request/Fill:', '`!rm` | `!remove`')
           .addField('Watch Request:', '`!w` | `!watch`')
+          .addField('Unwatch Request:', '`!uw` | `!unwatch`')
           .addField('Report Bugs:', '<@124948849893703680>')
           .setFooter('https://github.com/JohnDeved/MegaBot')
 
@@ -410,6 +434,9 @@ class Discord {
 
       w: this.fnc.watch,
       watch: this.fnc.watch,
+
+      uw: this.fnc.unwatch,
+      unwatch: this.fnc.unwatch,
 
       rm: this.fnc.remove,
       remove: this.fnc.remove,
