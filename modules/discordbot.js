@@ -213,7 +213,7 @@ class Discord {
           let watchers = []
           if (i !== -1) {
             watchers = embed.fields[i].value.split(', ')
-            if (watchers.indexOf(msg.author.toString() !== -1)) {
+            if (watchers.indexOf(msg.author.toString()) !== -1) {
               return msg.reply('You are allready Watching this Request! :thinking:')
             }
 
