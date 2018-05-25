@@ -471,12 +471,13 @@ class Discord {
     }
   }
 
-  init (bot) {
+  init (bot, callback) {
     this.bot = bot
     this.config = this.bot.config
     this.client.login(this.config.token)
 
     this.client.on('error', console.error)
+    this.client.on('ready', callback)
     this.client.on('ready', this.fnc.ready)
     this.client.on('message', this.fnc.message)
 
