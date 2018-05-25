@@ -12,8 +12,8 @@ class Discord {
      */
     this.fnc = {
       ready: msg => {
-        this.client.user.setAvatar('./static/logo.png')
-        this.client.user.setUsername('MegaBot')
+        this.client.user.setAvatar('./static/logo.png').catch(() => console.error('Avatar Cooldown'))
+        this.client.user.setUsername('MegaBot').catch(() => console.error('Username Cooldown'))
         this.bot.git.revparse(['HEAD'], (err, hash) => {
           if (err) { return console.error(err) }
           this.client.user.setActivity(`Chat | ${hash.slice(0, 7)}`, { type: 'LISTENING' })
