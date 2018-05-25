@@ -111,6 +111,27 @@ class Discord {
             .setURL(rss.guid)
 
           this.channels.rssForum.send({embed})
+        },
+        goggames: rss => {
+          const embed = new discord.RichEmbed()
+            .setTitle(rss.title)
+            .setURL(rss.link)
+            .setFooter(rss.guid)
+
+          request.get(`https://api.gog.com/products/${rss.guid}?expand=description&locale=US_USD_en-US`, (err, res, body) => {
+            if (err) return console.error(rss.guid, err)
+            if (res.statusCode === 404) return this.channels.rssGog.send({embed})
+            try {
+              body = JSON.parse(body)
+            } catch (err) {
+              return console.error(rss.guid, err)
+            }
+            embed.setDescription(body.description.lead.replace(/<.+?>/g, ''))
+              .setThumbnail(body.images.icon.replace(/\/\/images/, 'http://images'))
+              .setImage(body.images.logo.replace(/\/\/images/, 'http://images').replace(/_glx_logo/, ''))
+
+            this.channels.rssGog.send({embed})
+          })
         }
       },
 
