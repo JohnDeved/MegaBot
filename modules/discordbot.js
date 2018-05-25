@@ -112,6 +112,46 @@ class Discord {
 
           this.channels.rssForum.send({embed})
         },
+        bestrls: rss => {
+          console.log(rss)
+          const embed = new discord.RichEmbed()
+            .setTitle(rss.title)
+            .setURL(rss.link)
+            .setFooter(rss.categories.join(', '))
+
+          const $ = cheerio.load(rss.description)
+
+          let image = $('img').first().attr('src')
+          if (image) {
+            embed.setImage(image)
+          }
+
+          let links = $('strong a')
+          let zippyParts = []
+          links.each((i, x) => {
+            let a = $(x)
+            let text = a.text()
+            let href = a.attr('href')
+            if (!/\/\/bestrls\.net/.test(href)) {
+              if (/(Mega|Zippyshare|Openload)/i.test(text)) {
+                embed.addField(text + ':', href)
+              } else if (/\.rar/i.test(text)) {
+                zippyParts.push({name: text, link: href})
+              }
+            }
+          })
+
+          if (links.length === 0) { return }
+          if (zippyParts.length !== 0) {
+            let text = ''
+            zippyParts.forEach(x => {
+              text += `${x.name}\n${x.link}\n`
+            })
+            embed.addField('ZippyShare Parts:', text)
+          }
+
+          this.channels.rssDebrid.send({embed})
+        },
         goggames: rss => {
           const embed = new discord.RichEmbed()
             .setTitle(rss.title)
