@@ -171,6 +171,26 @@ class Discord {
 
             this.channels.rssGog.send({embed})
           })
+        },
+        scenegames: rss => {
+          const embed = new discord.RichEmbed()
+            .setTitle(rss.title)
+            .setURL(rss.link)
+            .setDescription(rss.description)
+            .setFooter(rss.guid)
+
+          request.get(rss.link, (err, res, body) => {
+            if (err) {
+              console.error(rss.guid, err)
+              this.channels.rssGames.send({embed})
+              return
+            }
+
+            const $ = cheerio.load(body)
+            embed.setImage($('meta[property="og:image"]').attr('content'))
+              .setTitle($('meta[property="og:title"]').attr('content'))
+            this.channels.rssGames.send({embed})
+          })
         }
       },
 
