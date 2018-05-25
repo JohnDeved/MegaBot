@@ -49,11 +49,11 @@ class Discord {
           }
           return new Promise(resolve => {
             request.post({url: 'https://api.coinhive.com/link/create', form: options}, (err, httpResponse, body) => {
-              if (err) return console.log(err)
+              if (err) return console.error(err)
               try {
                 body = JSON.parse(body)
               } catch (err) {
-                return console.log(err)
+                return console.error(err)
               }
               resolve(body)
             })
@@ -67,9 +67,9 @@ class Discord {
         let [, type, release, group] = msg.match(/^\(PRE\) \(([^)]+)\) (.+-(.+))$/)
 
         if (/xxx/i.test(type)) {
-          return console.log('exclude xxx:', msg)
+          return console.info('exclude xxx:', msg)
         } else if (/(german|swesub|dutch|danish|flemish|spanish|italian|french|finnish|polish|norwegian)/i.test(release)) {
-          return console.log('exclude foreign:', msg)
+          return console.info('exclude foreign:', msg)
         }
 
         const embed = new discord.RichEmbed()
@@ -113,7 +113,6 @@ class Discord {
           this.channels.rssForum.send({embed})
         },
         bestrls: rss => {
-          console.log(rss)
           const embed = new discord.RichEmbed()
             .setTitle(rss.title)
             .setURL(rss.link)
@@ -209,7 +208,7 @@ class Discord {
           msg.edit({embed}).then(msg => {
             setTimeout(() => {
               if (!msg.embeds[0].fields.find(x => /^(Fill ID|Request ID):$/.test(x.name))) {
-                console.log(msg.id, 'missing ID field')
+                console.warn(msg.id, 'missing ID field')
                 this.fnc.addID(msg, embed, isRequest)
               }
             }, 1000)
@@ -370,7 +369,6 @@ class Discord {
             let requestEmbed = requestMsg.embeds[0]
 
             let watchers = requestEmbed.fields.find(x => x.name === 'Watchers:')
-            console.log(watchers)
             watchers = watchers.value.split(', ')
             watchers.push(requestEmbed.fields[0].value)
             watchers.forEach(watcher => {
