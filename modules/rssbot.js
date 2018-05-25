@@ -23,7 +23,7 @@ class RssBot {
         let rss = this.config.rss.find(obj => obj.link === item.meta.link)
         this.discord.fnc.rssRelease[rss.name](item)
       })
-    }, 10 * 1000)
+    }, 1000)
 
     return this
   }
