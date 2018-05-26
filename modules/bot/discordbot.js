@@ -113,6 +113,7 @@ class Discord {
           this.channels.rssForum.send({embed})
         },
         bestrls: rss => {
+          console.log(rss.description)
           const embed = new discord.RichEmbed()
             .setTitle(rss.title)
             .setURL(rss.link)
@@ -120,6 +121,7 @@ class Discord {
 
           const $ = cheerio.load(rss.description)
 
+          let release = $('strong').first().text()
           let image = $('img').first().attr('src')
           if (image) {
             embed.setImage(image)
