@@ -1,10 +1,10 @@
 const fs = require('fs')
 
-module.exports = bot => {
+module.exports = async bot => {
   process.stdout.w = process.stdout.write
-  let log = fs.createWriteStream('./node.log')
+  let log = await fs.createWriteStream('./node.log')
   process.stdout.write = process.stderr.write = out => {
-    process.stdout.w(out)
+    process.stdout.w('oi mate ' + out)
     out = out.replace(/\u001B\[\d+m/g, '')
     log.write(out)
     if (bot.discord) {

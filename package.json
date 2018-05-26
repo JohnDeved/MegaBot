@@ -26,6 +26,7 @@
     "json-stringify-safe": "^5.0.1",
     "node-cleanup": "^2.1.2",
     "request": "^2.87.0",
+    "rethinkdb": "^2.3.3",
     "rss-feed-emitter": "^2.0.0",
     "simple-git": "^1.95.0"
   }
