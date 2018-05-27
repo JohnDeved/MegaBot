@@ -2,7 +2,7 @@ const RssFeedEmitter = require('rss-feed-emitter')
 
 class RssBot {
   constructor () {
-    this.feeder = new RssFeedEmitter()
+    this.feeder = new RssFeedEmitter({ userAgent: 'Googlebot' })
   }
 
   init (bot) {
