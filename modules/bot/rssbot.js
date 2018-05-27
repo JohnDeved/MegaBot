@@ -13,7 +13,7 @@ class RssBot {
     this.config.rss.forEach(rss => {
       this.feeder.add({
         url: rss.link,
-        refresh: 2000
+        refresh: rss.interval
       })
     })
 
