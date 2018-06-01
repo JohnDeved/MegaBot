@@ -17,13 +17,12 @@ class RssBot {
       })
     })
 
-    setTimeout(() => {
-      console.info('Listening to RSS Feed now')
-      this.feeder.on('new-item', item => {
-        let rss = this.config.rss.find(obj => obj.link === item.meta.link)
-        this.discord.fnc.rssRelease[rss.name](item)
-      })
-    }, 1000)
+    console.info('Listening to RSS Feed now')
+    this.feeder.on('new-item', item => {
+      let rss = this.config.rss.find(obj => obj.link === item.meta.link)
+      item.config = rss
+      this.discord.fnc.rssRelease[rss.name](item)
+    })
 
     return this
   }

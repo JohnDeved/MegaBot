@@ -104,6 +104,16 @@ class Discord {
             .setFooter(rss.categories.join(', '))
 
           this.channels.rssBlog.send({embed})
+
+          this.bot.r.db(rss.config.db.name).table(rss.config.db.table).insert({
+            name: rss.title,
+            url: rss.guid
+          })
+            .run(this.bot.db)
+            .catch(console.error)
+            .then(() => {
+              console.log('stored db mate')
+            })
         },
         forum: rss => {
           const embed = new discord.RichEmbed()
@@ -113,7 +123,7 @@ class Discord {
           this.channels.rssForum.send({embed})
         },
         bestrls: rss => {
-          console.log(rss.description)
+          // console.log(rss.description)
           const embed = new discord.RichEmbed()
             .setTitle(rss.title)
             .setURL(rss.link)
