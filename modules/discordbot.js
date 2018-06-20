@@ -312,12 +312,16 @@ class Discord {
             if (watchers) {
               watchers = watchers.value.split(', ')
               watchers.push(requestEmbed.fields[0].value)
-              watchers.forEach(watcher => {
-                let [userId] = watcher.match(/\d+/)
-                let user = this.client.users.get(userId)
-                user.send('Good News _Everyone_! Looks like Somebody filled your Request!', {embed})
-              })
+            } else {
+              watchers = requestEmbed.fields.find(x => x.name === 'Requester:')
+              watchers = [watchers.value]
             }
+            console.log(watchers)
+            watchers.forEach(watcher => {
+              let [userId] = watcher.match(/\d+/)
+              let user = this.client.users.get(userId)
+              user.send('Good News _Everyone_! Looks like Somebody filled your Request!', {embed})
+            })
 
             // remove json circular structures
             requestEmbed = this.fnc.embed2json(requestEmbed)
