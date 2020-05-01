@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "node app",
-    "debug": "node --inspect app"
+    "debug": "node --inspect app",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -27,6 +29,8 @@
     "node-cleanup": "^2.1.2",
     "request": "^2.87.0",
     "rss-feed-emitter": "^2.0.0",
-    "simple-git": "^1.92.0"
-  }
+    "simple-git": "^1.92.0",
+    "snyk": "^1.316.1"
+  },
+  "snyk": true
 }
